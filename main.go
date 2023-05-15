@@ -73,11 +73,11 @@ var wordArr = [7]string{
 }
 
 var randWord string
-var guessedLetters string
+var guessedLetters []string
 var correctLetter []string
 var wrongGuesses []string
 
-func getLetterInput() rune {
+func getLetterInput() string {
 	reader := bufio.NewReader(os.Stdin)
 	input, err := reader.ReadString('\n')
 	if err != nil {
@@ -93,7 +93,25 @@ func getLetterInput() rune {
 		fmt.Printf("Please Enter a Letter: ")
 		return getLetterInput()
 	}
-	return rInputSlice[0]
+	for _, value := range guessedLetters {
+		if strings.ToUpper(input) == value {
+			fmt.Print("Please Enter a Letter You Haven`t Guessed: ")
+			return getLetterInput()
+		}
+	}
+	guessedLetters = append(guessedLetters, input)
+	return strings.ToUpper(input)
+}
+
+func checkForCorrectGuess(letter string) bool {
+	for _, value := range randWord {
+		if letter == string(value) {
+			correctLetter = append(correctLetter, letter)
+			return true
+		}
+	}
+	wrongGuesses = append(wrongGuesses, letter)
+	return false
 }
 
 func main() {
@@ -115,5 +133,8 @@ func main() {
 		fmt.Println(hangmanArr[lives])
 		fmt.Printf("Please Guess a Letter: ")
 		letter := getLetterInput()
+		if !checkForCorrectGuess(letter) {
+			lives -= 1
+		}
 	}
 }
