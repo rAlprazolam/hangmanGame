@@ -132,19 +132,36 @@ func showBoard() {
 	fmt.Println()
 }
 
+func getAllIndexes(theStr, subStr string) (indices []int) {
+	if (len(subStr) == 0) || (len(theStr) == 0) {
+		return indices
+	}
+	offset := 0
+	for {
+		i := strings.Index(theStr[offset:], subStr)
+		if i == -1 {
+			return indices
+		}
+		offset += i
+		indices = append(indices, offset)
+		offset += len(subStr)
+	}
+}
+
+func updateCorrectLetters(letter string) {
+	indexMatches := getAllIndexes(randWord, letter)
+	for _, v := range indexMatches {
+		correctLetters[v] = letter
+	}
+}
+
 func main() {
-	// Show Game Board
-
-	// Get a letter from the user
-
-	// A. If they guesses letter in word
-	// Add to correctLetter
-	// 1. Are there more letters to guess?
-	// 2. If no more letters to guess (You Win)
-	// B. If they guessed letter not in word
-	// 1. Add new letter to guessedLetters,
-	// wrongGuesses
-	// Check if they died
 	getRandomWord()
-	showBoard()
+	for true {
+		showBoard()
+		guess := getLetterInput()
+		if strings.Contains(randWord, guess) {
+			updateCorrectLetters(guess)
+		}
+	}
 }
