@@ -4,8 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
 	"strings"
+	"time"
 	"unicode"
 )
 
@@ -74,7 +76,7 @@ var wordArr = [7]string{
 
 var randWord string
 var guessedLetters []string
-var correctLetter []string
+var correctLetters []string
 var wrongGuesses []string
 
 func getLetterInput() string {
@@ -103,19 +105,34 @@ func getLetterInput() string {
 	return strings.ToUpper(input)
 }
 
-func checkForCorrectGuess(letter string) bool {
-	for _, value := range randWord {
-		if letter == string(value) {
-			correctLetter = append(correctLetter, letter)
-			return true
+func getRandomWord() string {
+	seed := time.Now().Unix()
+	rand.Seed(seed)
+	randWord = wordArr[rand.Intn(7)]
+	correctLetters = make([]string, len(randWord))
+	return randWord
+}
+
+func showBoard() {
+	fmt.Println(hangmanArr[6-len(wrongGuesses)])
+	fmt.Print("Secret Word : ")
+	for _, value := range correctLetters {
+		if value == "" {
+			fmt.Print("_")
+		} else {
+			fmt.Print(value)
 		}
 	}
-	wrongGuesses = append(wrongGuesses, letter)
-	return false
+	fmt.Print("\nIncorrect Guesses : ")
+	if len(wrongGuesses) > 0 {
+		for _, v := range wrongGuesses {
+			fmt.Print(v + " ")
+		}
+	}
+	fmt.Println()
 }
 
 func main() {
-	var lives int = 6
 	// Show Game Board
 
 	// Get a letter from the user
@@ -128,13 +145,6 @@ func main() {
 	// 1. Add new letter to guessedLetters,
 	// wrongGuesses
 	// Check if they died
-
-	for lives > 0 {
-		fmt.Println(hangmanArr[lives])
-		fmt.Printf("Please Guess a Letter: ")
-		letter := getLetterInput()
-		if !checkForCorrectGuess(letter) {
-			lives -= 1
-		}
-	}
+	getRandomWord()
+	showBoard()
 }
